@@ -1,10 +1,11 @@
 const CREATE_URL = 'https://prod-34.uksouth.logic.azure.com:443/workflows/25da0da831e1452c8e95b423541a8889/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=pkLwROr2CYhN8t9H2B3UkVKxCE9pZj6SAA99aJZRmJI';
 const READ_URL   = 'https://prod-06.uksouth.logic.azure.com:443/workflows/2859e938844440f3a538b5e68c3be831/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=x5-6M4fxEc64eK7Uyo7D2bPv2U3vbFMU1OkoIwQ4pg4';
-const UPDATE_URL = 'https://prod-20.uksouth.logic.azure.com:443/workflows/9a0e80708f4648f19ee4030827c1b6df/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=e12sE3xGtTQNUeApkQUovQd6o8JoKYr2E8FOQNUc-fI'; // soft delete
-const DELETE_URL = 'https://prod-11.uksouth.logic.azure.com:443/workflows/8b2fd55789a94db6a0d70b5d2485e72f/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=RJ-OTox3Eae9Nsf7OHrs3fz4rn6r2Bl-jqbIodv5ZvU'
+const UPDATE_URL = 'https://prod-20.uksouth.logic.azure.com:443/workflows/9a0e80708f4648f19ee4030827c1b6df/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=e12sE3xGtTQNUeApkQUovQd6o8JoKYr2E8FOQNUc-fI';
+
 // Load content when page loads
 document.addEventListener('DOMContentLoaded', loadContent);
 
+// READ (FIXED)
 function loadContent() {
   fetch(READ_URL)
     .then(res => res.json())
@@ -12,7 +13,16 @@ function loadContent() {
       const list = document.getElementById('contentList');
       list.innerHTML = '';
 
-      data.forEach(item => {
+      // 🔑 Handle Logic App / Cosmos DB response shape
+      const items =
+        Array.isArray(data) ? data :
+        Array.isArray(data.documents) ? data.documents :
+        Array.isArray(data.value) ? data.value :
+        [];
+
+      items.forEach(item => {
+        // Skip soft-deleted items
+        if (item.isDeleted) return;
         list.appendChild(renderItem(item));
       });
     })
@@ -21,6 +31,7 @@ function loadContent() {
     });
 }
 
+// CREATE
 function createContent() {
   const title = document.getElementById('title').value.trim();
   const description = document.getElementById('description').value.trim();
@@ -41,7 +52,6 @@ function createContent() {
 
   fetch(CREATE_URL, {
     method: 'POST',
-    headers: {},
     body: JSON.stringify(body)
   })
     .then(() => {
@@ -53,6 +63,7 @@ function createContent() {
     });
 }
 
+// DELETE (soft delete)
 function deleteContent(id) {
   fetch(UPDATE_URL, {
     method: 'POST',
@@ -68,6 +79,7 @@ function deleteContent(id) {
     });
 }
 
+// RENDER
 function renderItem(item) {
   const div = document.createElement('div');
   div.className = 'content-item';
@@ -102,6 +114,7 @@ function renderItem(item) {
   return div;
 }
 
+// CLEAR FORM
 function clearForm() {
   document.getElementById('title').value = '';
   document.getElementById('description').value = '';
