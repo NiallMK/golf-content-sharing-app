@@ -1,78 +1,8 @@
 body {
-      font-family: Arial, sans-serif;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f0f4f0;
-    }
-    h1 {
-      color: #2d5016;
-      text-align: center;
-    }
-    h2 {
-      color: #3a6b1f;
-    }
-    section {
-      background: white;
-      padding: 20px;
-      margin: 20px 0;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 5px 0;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-    button {
-      background-color: #3a6b1f;
-      color: white;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background-color: #2d5016;
-    }
-    button.delete {
-      background-color: #c93030;
-      padding: 8px 16px;
-      font-size: 14px;
-    }
-    button.delete:hover {
-      background-color: #a02020;
-    }
-    .content-item {
-      background: #fafafa;
-      padding: 15px;
-      margin: 15px 0;
-      border-radius: 6px;
-      border-left: 4px solid #3a6b1f;
-    }
-    .content-item h3 {
-      margin-top: 0;
-      color: #2d5016;
-    }
-    .content-item img, .content-item video {
-      max-width: 100%;
-      border-radius: 4px;
-      margin: 10px 0;
-    }
-    .content-item audio {
-      width: 100%;
-      margin: 10px 0;
-    }
-    .file-type {
-      display: inline-block;
-      background: #e8f5e9;
-      color: #2d5016;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      margin: 5px 0;
-    }
+  font-family: Arial, sans-serif;
+  margin: 40px;
+}
+
+input, select {
+  width: 300px;
+}

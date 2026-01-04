@@ -2,28 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Golf Content Sharing</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>⛳ Golf Content Sharing</h1>
+  <h1>Golf Content Sharing</h1>
 
   <section>
     <h2>Share Golf Content</h2>
-    <input id="title" placeholder="Title" type="text"><br>
-    <textarea id="description" placeholder="Description" rows="3"></textarea><br>
+    <input id="title" placeholder="Title"><br><br>
+    <input id="description" placeholder="Description"><br><br>
 
     <select id="fileType">
       <option value="image">Image</option>
       <option value="video">Video</option>
       <option value="audio">Audio</option>
-    </select><br>
+    </select><br><br>
 
-    <input id="fileUri" placeholder="File URL" type="url"><br>
+    <input id="fileUri" placeholder="File URL"><br><br>
 
-    <button onclick="createContent()">Share Content</button>
+    <button onclick="createContent()">Share</button>
   </section>
 
   <hr>
@@ -32,3 +31,7 @@
     <h2>Shared Golf Content</h2>
     <div id="contentList"></div>
   </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
