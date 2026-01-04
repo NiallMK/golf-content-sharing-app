@@ -2,27 +2,43 @@ const CREATE_URL = 'https://prod-34.uksouth.logic.azure.com:443/workflows/25da0d
 const READ_URL   = 'https://prod-06.uksouth.logic.azure.com:443/workflows/2859e938844440f3a538b5e68c3be831/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=x5-6M4fxEc64eK7Uyo7D2bPv2U3vbFMU1OkoIwQ4pg4';
 const UPDATE_URL = 'https://prod-20.uksouth.logic.azure.com:443/workflows/9a0e80708f4648f19ee4030827c1b6df/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=e12sE3xGtTQNUeApkQUovQd6o8JoKYr2E8FOQNUc-fI';
 
-// Load content when page loads
+// Load content on page load
 document.addEventListener('DOMContentLoaded', loadContent);
 
-// READ (FIXED)
+/* =======================
+   READ CONTENT (FIXED)
+   ======================= */
 function loadContent() {
   fetch(READ_URL)
     .then(res => res.json())
     .then(data => {
+      console.log('READ raw response:', data);
+
       const list = document.getElementById('contentList');
       list.innerHTML = '';
 
-      // 🔑 Handle Logic App / Cosmos DB response shape
-      const items =
-        Array.isArray(data) ? data :
-        Array.isArray(data.documents) ? data.documents :
-        Array.isArray(data.value) ? data.value :
-        [];
+      let items = [];
+
+      // Handle ALL Logic App / Cosmos DB response shapes
+      if (Array.isArray(data)) {
+        items = data;
+      } else if (data.documents && Array.isArray(data.documents)) {
+        items = data.documents;
+      } else if (data.value && Array.isArray(data.value)) {
+        items = data.value;
+      } else if (data.body && Array.isArray(data.body)) {
+        items = data.body;
+      } else if (
+        data.body &&
+        data.body.Documents &&
+        Array.isArray(data.body.Documents)
+      ) {
+        items = data.body.Documents;
+      }
+
+      console.log('NORMALISED ITEMS:', items);
 
       items.forEach(item => {
-        // Skip soft-deleted items
-        if (item.isDeleted) return;
         list.appendChild(renderItem(item));
       });
     })
@@ -31,7 +47,9 @@ function loadContent() {
     });
 }
 
-// CREATE
+/* =======================
+   CREATE CONTENT
+   ======================= */
 function createContent() {
   const title = document.getElementById('title').value.trim();
   const description = document.getElementById('description').value.trim();
@@ -63,15 +81,14 @@ function createContent() {
     });
 }
 
-// DELETE (soft delete)
+/* =======================
+   DELETE (SOFT / UPDATE)
+   ======================= */
 function deleteContent(id) {
   fetch(UPDATE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      id: id,
-      isDeleted: true
-    })
+    body: JSON.stringify({ id })
   })
     .then(() => loadContent())
     .catch(err => {
@@ -79,7 +96,9 @@ function deleteContent(id) {
     });
 }
 
-// RENDER
+/* =======================
+   RENDER ITEM
+   ======================= */
 function renderItem(item) {
   const div = document.createElement('div');
   div.className = 'content-item';
@@ -114,7 +133,9 @@ function renderItem(item) {
   return div;
 }
 
-// CLEAR FORM
+/* =======================
+   CLEAR FORM
+   ======================= */
 function clearForm() {
   document.getElementById('title').value = '';
   document.getElementById('description').value = '';
