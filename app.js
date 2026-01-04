@@ -41,7 +41,7 @@ function createContent() {
 
   fetch(CREATE_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {},
     body: JSON.stringify(body)
   })
     .then(() => {
