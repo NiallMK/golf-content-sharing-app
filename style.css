@@ -104,3 +104,19 @@ button:hover {
   border-radius: 8px;
   background: #fafafa;
 }
+
+.tags {
+  margin-top: 8px;
+}
+
+.tag {
+  display: inline-block;
+  background-color: #e6f4ea;
+  color: #2d6a4f;
+  padding: 4px 10px;
+  margin-right: 6px;
+  margin-top: 4px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
