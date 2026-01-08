@@ -111,12 +111,18 @@ button:hover {
 
 .tag {
   display: inline-block;
-  background-color: #e6f4ea;
-  color: #2d6a4f;
+  background: #e8f5e9;
+  color: #2d5016;
   padding: 4px 10px;
-  margin-right: 6px;
-  margin-top: 4px;
   border-radius: 12px;
   font-size: 12px;
+  margin: 3px 5px 3px 0;
 }
+
+.flagged {
+  color: #b71c1c;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
 

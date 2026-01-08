@@ -2,12 +2,13 @@ const CREATE_URL = 'https://prod-34.uksouth.logic.azure.com:443/workflows/25da0d
 const READ_URL   = 'https://prod-06.uksouth.logic.azure.com:443/workflows/2859e938844440f3a538b5e68c3be831/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=x5-6M4fxEc64eK7Uyo7D2bPv2U3vbFMU1OkoIwQ4pg4';
 const UPDATE_URL = 'https://prod-20.uksouth.logic.azure.com:443/workflows/9a0e80708f4648f19ee4030827c1b6df/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=e12sE3xGtTQNUeApkQUovQd6o8JoKYr2E8FOQNUc-fI';
 const DELETE_URL = 'https://prod-11.uksouth.logic.azure.com:443/workflows/8b2fd55789a94db6a0d70b5d2485e72f/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=RJ-OTox3Eae9Nsf7OHrs3fz4rn6r2Bl-jqbIodv5ZvU';
-/* ---------------- GLOBAL STATE ---------------- */
+
+/* ---------- GLOBAL STATE ---------- */
 
 let currentItems = [];
 let editingId = null;
 
-/* ---------------- LOAD CONTENT ---------------- */
+/* ---------- LOAD CONTENT ---------- */
 
 function loadContent() {
   fetch(READ_URL)
@@ -17,14 +18,24 @@ function loadContent() {
       const list = document.getElementById('contentList');
       list.innerHTML = '';
 
-      data.forEach(item => {
+      data
+        .filter(item => !item.flagged)
+        .forEach(item => {
+
         const tagsHtml = item.tags && item.tags.length
           ? item.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ')
           : `<span class="tag">untagged</span>`;
 
+        const moderationHtml = item.flagged
+          ? `<p class="flagged">⚠️ Content under review</p>`
+          : '';
+
         list.innerHTML += `
           <div class="content-item">
             <h3>${item.title}</h3>
+
+            ${moderationHtml}
+
             <p>${item.description}</p>
             <p><strong>Type:</strong> ${item.fileType}</p>
 
@@ -43,7 +54,7 @@ function loadContent() {
     .catch(err => console.error('Error loading content:', err));
 }
 
-/* ---------------- CREATE / UPDATE ---------------- */
+/* ---------- CREATE / UPDATE ---------- */
 
 function createContent() {
   const body = {
@@ -68,13 +79,13 @@ function createContent() {
     .then(() => {
       editingId = null;
       clearForm();
-      loadContent();
       updateButtonLabel();
+      loadContent();
     })
     .catch(err => console.error('Error saving content:', err));
 }
 
-/* ---------------- EDIT ---------------- */
+/* ---------- EDIT ---------- */
 
 function editContent(id) {
   const item = currentItems.find(i => i.id === id);
@@ -89,7 +100,7 @@ function editContent(id) {
   updateButtonLabel();
 }
 
-/* ---------------- DELETE (SOFT DELETE) ---------------- */
+/* ---------- DELETE (SOFT DELETE) ---------- */
 
 function deleteContent(id) {
   fetch(UPDATE_URL, {
@@ -101,7 +112,7 @@ function deleteContent(id) {
     .catch(err => console.error('Error deleting content:', err));
 }
 
-/* ---------------- UI HELPERS ---------------- */
+/* ---------- UI HELPERS ---------- */
 
 function clearForm() {
   document.getElementById('title').value = '';
@@ -116,6 +127,7 @@ function updateButtonLabel() {
   btn.innerText = editingId ? 'Update Content' : 'Share Content';
 }
 
-/* ---------------- INIT ---------------- */
+/* ---------- INIT ---------- */
 
 loadContent();
+
